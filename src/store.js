@@ -23,45 +23,31 @@ const fbConfig = {
 firebase.initializeApp(fbConfig);
 //const db =firebase.initializeApp(fbConfig).firestore();
 
-//const funcURL= "https://us-central1-myfirstvueapp-2fc2e.cloudfunctions.net/"
-const funcURL= "https://localhost:5004/myfirstvueapp-2fc2e/us-central1/"
+const funcURL= "https://us-central1-myfirstvueapp-2fc2e.cloudfunctions.net/"
+//const funcURL= "https://localhost:5004/myfirstvueapp-2fc2e/us-central1/"
 export default new Vuex.Store({
   state:{},
   mutations:{
   //...vuexfireMutations,
   },
   actions:{
-      getMeSomeSugar:(state)=>{
-        const remoteAPI = firebase.functions();
-        remoteAPI.https.hellohellowWorld()
-        .then(data=>{ console.log("back");}
-       
-          )
-          
+      testingHelloWorld(state){        
+         Axios.post(`${funcURL}hellohellowWorld`,1)
+         .then(response=>response.data)
+         .then(data=>console.log(data))        
       },
-      fetchSugar(state){
-        testingFuction.exports.insertIntoDB;
-         //Axios.post(`${funcURL}hellohellowWorld`,1) 
-        
-      },
-      insertData(state){
-        //cors(request, response, () => {
+      readFireStore(state){       
         let object = 1;
-        Axios.post(`${funcURL}insertIntoDB`,object)   //}) 
-        
+        Axios.post(`${funcURL}readFireStore`,object)          
       },
-      changeData(state){
-        console.log("cd");
-        Axios.post(`${funcURL}changeData`)    
+      changeDataFireStore(state){     
+        Axios.post(`${funcURL}changeDataFireStore`,{name:"echo"})    
       },
-      connect({commit}){
-        console.log("send data to server from store");
-          Axios.post('http://localhost:2990/api/player/connect', this.state.currentGameIndex)
-          .then(response =>response.data)
-          .then(data => {commit('USER_CONNECTED', data)})
-          .catch(error=>console.log(error))
-      },
-
+      withadminaddedhellow(state){        
+        Axios.post(`${funcURL}withadminaddedhellow`,1)
+        .then(response=>response.data)
+        .then(data=>console.log(data))        
+     },
 
   },
   modules: {

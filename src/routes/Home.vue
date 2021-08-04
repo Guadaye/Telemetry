@@ -10,8 +10,10 @@ Copyright (c) 2018.Haojun All Rights Reserved.
     <section class="home-container">
         <div class = "header">
             <h1>Welcome to {{ name }}</h1>
-          <button  @click="getMeSomeSugar">Check</button>
-            
+          <button  @click="changeDataFireStore">change</button>
+            <button  @click="readFireStore">Read</button>
+            <button  @click="testingHelloWorld">testingHelloWorld</button>
+            <button  @click="withadminaddedhellow">withadminaddedhellow</button>
         </div>
 
 
@@ -34,7 +36,7 @@ Copyright (c) 2018.Haojun All Rights Reserved.
             }
 
             this.injectGetters([]);
-            this.injectActions(['getMeSomeSugar','fetchSugar','insertData','changeData']);
+            this.injectActions(['changeDataFireStore','readFireStore','testingHelloWorld','withadminaddedhellow']);
 
         }
 
