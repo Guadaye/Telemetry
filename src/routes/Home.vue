@@ -10,17 +10,22 @@ Copyright (c) 2018.Haojun All Rights Reserved.
     <section class="home-container">
         <div class = "header">
             <h1>Welcome to {{ name }}</h1>
-          <button  @click="changeDataFireStore">change</button>
+           
             <button  @click="readFireStore">Read</button>
-            <button  @click="testingHelloWorld">testingHelloWorld</button>
-            <button  @click="withadminaddedhellow">withadminaddedhellow</button>
+ 
+
+            <div>{{firestoreData}}</div>
+
+
+            
+            Replace your name here:<br>
+            <input type="text"  v-model="userName" ><br>
+               
+        <button @click="replaceName">submit</button>
         </div>
-
-
-
     </section>
-
 </template>
+
 <script>
 
     import Controller from '@/mixins/controller'
@@ -30,16 +35,20 @@ Copyright (c) 2018.Haojun All Rights Reserved.
         constructor( name, subComponentList = []) {
             super( name, subComponentList );
             this.vm = {
+
+                    userName:"",
             }
             this.props = {
                 name: String,
             }
 
-            this.injectGetters([]);
-            this.injectActions(['changeDataFireStore','readFireStore','testingHelloWorld','withadminaddedhellow']);
+            this.injectGetters(['firestoreData']);
+            this.injectActions(['changeDataFireStore','readFireStore','testingHelloWorld']);
 
         }
-
+            replaceName(){
+            this.changeDataFireStore(this.userName);
+        }
     }
 
     export default new PlayerHomeController('pgHome');

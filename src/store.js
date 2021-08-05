@@ -11,9 +11,8 @@ import testingFuction from "functions/index.js"
 
 
 
-const cors = require('cors')({ origin: true })
 Vue.use(Vuex,Axios)
-Axios.defaults.basURL= 'http://localhost:2990'
+//Axios.defaults.basURL= 'http://localhost:2990'
 const fbConfig = {
   apiKey: "AIzaSyDBfJcjpwoottzRDTYAw1QQJMvg-ZVbQaY",
   authDomain: "myfirstvueapp-2fc2e.firebaseappio.com",
@@ -23,12 +22,20 @@ const fbConfig = {
 firebase.initializeApp(fbConfig);
 //const db =firebase.initializeApp(fbConfig).firestore();
 
-const funcURL= "https://us-central1-myfirstvueapp-2fc2e.cloudfunctions.net/"
+const funcURL= "//us-central1-myfirstvueapp-2fc2e.cloudfunctions.net/"
 //const funcURL= "https://localhost:5004/myfirstvueapp-2fc2e/us-central1/"
 export default new Vuex.Store({
-  state:{},
+  state:{
+      firestoreData:"",
+
+  },
   mutations:{
   //...vuexfireMutations,
+    READ_FIRESTORE:(state,data)=>{
+      state.firestoreData = data;
+
+    },
+
   },
   actions:{
       testingHelloWorld(state){        
@@ -36,12 +43,20 @@ export default new Vuex.Store({
          .then(response=>response.data)
          .then(data=>console.log(data))        
       },
-      readFireStore(state){       
+      readFireStore({commit}){       
         let object = 1;
-        Axios.post(`${funcURL}readFireStore`,object)          
+        Axios.post(`${funcURL}withadminaddedhellow`,1) 
+        .then(response=>response.data)
+        .then(
+          data=>{commit('READ_FIRESTORE', data)}
+        )  
+                 
       },
-      changeDataFireStore(state){     
-        Axios.post(`${funcURL}changeDataFireStore`,{name:"echo"})    
+      changeDataFireStore(state,payload){   
+        let userName = payload.toString();  
+        Axios.post(`${funcURL}changeDataFireStore`,{name:userName}) 
+        .then(response=>response.data)
+        .then(data=>console.log(data))    
       },
       withadminaddedhellow(state){        
         Axios.post(`${funcURL}withadminaddedhellow`,1)
@@ -49,6 +64,10 @@ export default new Vuex.Store({
         .then(data=>console.log(data))        
      },
 
+  },
+
+  getters:{
+    firestoreData:state=>state.firestoreData,
   },
   modules: {
   //  user,
