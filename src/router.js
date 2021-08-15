@@ -10,7 +10,7 @@ Vue.use( Router );
 
 import Home from '@/routes/Home.vue'
 import About from '@/routes/About.vue'
-
+import Charts from '@/routes/Charts.vue'
 
 
 
@@ -18,6 +18,7 @@ export default new Router({
     routes: [
         { path:"/",      name:"Home",  component: Home, props: { name: "Telemetry"} },
         { path:"/about", name:"About", component: About },
+        { path:"/charts", name:"Charts", component: Charts },
 
     ]
 });

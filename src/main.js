@@ -6,7 +6,8 @@ Copyright (c) 2021. Haojun Liu. All Rights Reserved.
 'use strict';
 
 import Vue from 'vue'
-
+//import VueGoogleCharts from 'vue-google-charts'
+//Vue.use(VueGoogleCharts)
 //registering(globally) our router to our root #app
 import store from '@/store'
 
@@ -17,6 +18,7 @@ import router from '@/router'
 
 //This is were we register every components that is instantiated in this Main Root Component.
 import App from '@/App.vue'
+
 
 //import './plugins/iview.js'
 

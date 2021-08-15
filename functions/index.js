@@ -4,12 +4,27 @@ const config ={projectId:"myfirstvueapp-2fc2e", databaseURL: "https://myfirstvue
 const {Firestore} = require('@google-cloud/firestore')
 const cors = require('cors')({ origin: true })
 const admin = require('firebase-admin');
+const { forEach } = require("core-js/core/array");
+//const { ownKeys } = require("core-js/fn/reflect");
 //const config ={projectId:"myfirstvueapp-2fc2e", databaseURL: "https://myfirstvueapp-2fc2e.firebaseappio.com", storageBucket:"myfirstvueapp-2fc2e.appspot.com",locationId:"us-central"} ;
 
 admin.initializeApp(config);      
 let db = admin.firestore();
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
+
+function EnableCORSRespons(req, res){
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, POST,OPTIONS');
+
+        if (req.method === 'OPTIONS') {     
+            // Send response to OPTIONS requests
+            res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+            res.set('Access-Control-Allow-Headers',  'Origin,Content-Type');
+            res.set('Access-Control-Max-Age', '3600');
+            res.set('Access-Control-Preflight-Continue', true);
+          } 
+}
 
 exports.hellohellowWorld = functions.https.onRequest((req, res) => {
     cors(req, res, () => {
@@ -22,15 +37,15 @@ exports.hellohellowWorld = functions.https.onRequest((req, res) => {
 exports.withadminaddedhellow = functions.https.onRequest((req, res) => {
   
     res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST');
+    res.set('Access-Control-Allow-Methods', 'GET, POST,OPTIONS');
     if (req.method === 'OPTIONS') {
       // Send response to OPTIONS requests
-      res.set('Access-Control-Allow-Methods', 'GET');
-      res.set('Access-Control-Allow-Headers', 'Content-Type');
+      res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+      res.set('Access-Control-Allow-Headers',  'Origin,Content-Type');
       res.set('Access-Control-Max-Age', '3600');
+      res.set('Access-Control-Preflight-Continue', true);
+      
     }
-
-
     return db.collection("telemetryTesting").doc("name").get()
         .then(doc=>{
             const data = doc.data();
@@ -40,34 +55,11 @@ exports.withadminaddedhellow = functions.https.onRequest((req, res) => {
 });
 
 exports.changeDataFireStore = functions.https.onRequest((req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST');
-    if (req.method === 'OPTIONS') {
-      // Send response to OPTIONS requests
-      res.set('Access-Control-Allow-Methods', 'GET');
-      res.set('Access-Control-Allow-Headers', 'Content-Type');
-      res.set('Access-Control-Max-Age', '3600');
-    }       
-
-        const test = req.body;
-        let data = ({two:test})
-       
-        
-         db.collection("telemetryTesting").doc("name").update(test)
-        .then(db.collection("telemetryTesting").doc("name").get()
-        .then(doc=>{
-            const data = doc.data();
-            return res.send(data);
-        })
-
-        )
-        //res.send(data);
-        //.then(result=>{
-        //    let doc = admin.firestore().collection("telemetryTesting").doc("name");
-        //    res.send(doc);
-        //})
-        
-    
+    EnableCORSRespons(req,res);     
+    const test = req.body;
+    db.collection("telemetryTesting").doc("name").update(test)
+    .then(res.send("updated successfully"));            
+          
 });
 
 exports.readFirestore = functions.https.onRequest((req, res) => {
@@ -80,36 +72,115 @@ exports.readFirestore = functions.https.onRequest((req, res) => {
 
     }); 
 });
-/*
-exports.convertToUppercase = functions.database.ref('/test/{pushId}/text').onWrite(event => {
-  const text = event.data.val();
-  const uppercaseText = text.toUpperCase();
-  return event.data.ref.parent.child('uppercaseText').set(uppercaseText);
-});
-
-//export const aggregate = functions.https.onCall(...)
-exports.aggregate = functions.https.onCall((snapshot,context)=>{
-    const data = snapshot.data();
-    const docId = context.params.documentId;
-
-    // your code
-    return {id: docId,payload:data}
-});
 
 
-// dont use it if something will be updated
-//exports.onTheFly = functions.firebaseConfig
-//                            .document('collection/record')
- //                           .onCreate((user,context)=>{
-//pull id from the context...
-//})
+exports.getAggregatedData = functions.https.onRequest((req,res)=>{
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, POST,OPTIONS');
+    try{
+        if (req.method === 'OPTIONS') {
+        // Send response to OPTIONS requests
+        res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+        res.set('Access-Control-Allow-Headers',  'Origin,Content-Type');
+        res.set('Access-Control-Max-Age', '3600');
+        res.set('Access-Control-Preflight-Continue', true);
+        }  
 
-exports.getAggregateD= functions.https.onRequest((request,response)=>{
-    const myId = request.params.id;
-    console.log("here");
-    //do work here.
-    response.send({});
-    end();
+        const whywhy = req.body;
+        let ahhh = whywhy.number;
+        let actionCount = 0;
+        let playerArray = [];
+        let dbRef= db.collection("telemetryPlayer");
+        let query = dbRef.where('gamesWon','>',ahhh).get();
+        query.then(result=>{        
+            result.forEach(
+                doc=>{
+                    let rec = doc.data();
+                    console.log(rec);
+                    actionCount=actionCount+1;
+                    playerArray.push(rec)
+                })
+
+                res.send(JSON.stringify({count:actionCount,array:playerArray}));
+        });        
+    }catch(e){
+        let  info={msg:e.message,stack:e.stack};
+        res.send(JSON.stringify(info))
+    }      
 })
 
-*/
+
+    exports.getGameLog = functions.https.onRequest((req,res)=>{
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Methods', 'GET, POST,OPTIONS');
+        try{
+            if (req.method === 'OPTIONS') {
+            // Send response to OPTIONS requests
+            res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+            res.set('Access-Control-Allow-Headers',  'Origin,Content-Type');
+            res.set('Access-Control-Max-Age', '3600');
+            res.set('Access-Control-Preflight-Continue', true);
+            }  
+
+            const bodyData = req.body;
+            let day = bodyData.number;
+            let actionCount = 0;
+            let playerArray = [];
+            let dbRef= db.collection("telemetryGamesLog");
+            let query = dbRef.where('day','>',day).get();
+            query.then(result=>{           
+                result.forEach(
+                    doc=>{
+                        let rec = doc.data();
+                        console.log(rec);
+                        actionCount=actionCount+1;
+                        playerArray.push(rec)
+                    })
+        
+                    res.send(JSON.stringify({count:actionCount,array:playerArray}));
+            });            
+        }catch(e){
+            let  info={msg:e.message,stack:e.stack};
+            res.send(JSON.stringify(info))
+        }      
+    
+    })
+
+    exports.getGameLogForLineChart = functions.https.onRequest((req,res)=>{
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Methods', 'GET, POST,OPTIONS');
+        try{
+            if (req.method === 'OPTIONS') {
+            // Send response to OPTIONS requests
+            res.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+            res.set('Access-Control-Allow-Headers',  'Origin,Content-Type');
+            res.set('Access-Control-Max-Age', '3600');
+            res.set('Access-Control-Preflight-Continue', true);
+            }  
+
+            const bodyData = req.body;
+            let day = bodyData.number;
+            let actionCount = 0;
+            let playerArray = [];
+            let dbRef= db.collection("telemetryGamesLog");
+            let query = dbRef.where('day','>',day).get();
+            query.then(result=>{           
+                result.forEach(
+                    doc=>{
+                        let rec = doc.data();
+                        let gamePerDay=0;
+                        rec.timeFrame.forEach(element=>{
+                            gamePerDay+=element;
+                        })
+                        playerArray.push({day:rec.day,gamesPlayed:gamePerDay});
+                        actionCount++;
+                    })
+        
+                    res.send(JSON.stringify({count:actionCount,array:playerArray}));
+            });            
+        }catch(e){
+            let  info={msg:e.message,stack:e.stack};
+            res.send(JSON.stringify(info))
+        }      
+    
+    })

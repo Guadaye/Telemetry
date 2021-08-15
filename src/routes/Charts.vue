@@ -3,34 +3,32 @@ VFS VUE Single File Component
 
 <pgPlayerInGame name="User"></pgPlayerInGame>
 
-Copyright (c) 2018.Haojun All Rights Reserved.
+Copyright (c) 2021.Haojun All Rights Reserved.
 -->
 <template>
 
     <section class="home-container">
         <div class = "header">
-            <h1>Welcome to {{ name }}</h1>
-            <div>
-                <button  @click="goToCharts">GoToCharts</button>
-            </div>
-            <button  @click="readFireStore">Read</button>
- 
-
-            <div>{{firestoreData}}</div>
-            
-            Replace your name here:<br>
-            <input type="text"  v-model="userName" ><br>
-               
-        <button @click="replaceName">submit</button>
+            <h1>Charts</h1>
+            <button @click="backHome">Home</button>    
         </div>
+                                      
+        <div><pgBarChart></pgBarChart></div>
+        <div><pgPieChart></pgPieChart></div>
+        <div><pgHeatMap></pgHeatMap></div>
+        <div><pgLineChart></pgLineChart></div>
+        
     </section>
 </template>
 
 <script>
-
+    import pgBarChart from '@/components/barChart.vue'
     import Controller from '@/mixins/controller'
+    import pgLineChart from '@/components/lineChart.vue'
+    import pgPieChart from '@/components/pieChart.vue'
+    import pgHeatMap from '@/components/heatMap.vue'
 
-    class PlayerHomeController extends Controller {
+    class ChartsController extends Controller {
 
         constructor( name, subComponentList = []) {
             super( name, subComponentList );
@@ -46,15 +44,13 @@ Copyright (c) 2018.Haojun All Rights Reserved.
             this.injectActions(['changeDataFireStore','readFireStore','testingHelloWorld']);
 
         }
-            replaceName(){
-            this.changeDataFireStore(this.userName);
-        }
-            goToCharts(){
-                 this.$router.push("/Charts");
-            }
+            backHome(){
+                this.$router.push("/");
+            };
+                   
     }
 
-    export default new PlayerHomeController('pgHome');
+    export default new ChartsController('pgCharts',{pgBarChart,pgLineChart,pgPieChart,pgHeatMap});
 
 </script>
 <style scoped>
@@ -63,8 +59,8 @@ Copyright (c) 2018.Haojun All Rights Reserved.
         display: inline-block;
         width: 200vh;
          height: 100vh;
-                background-color: rgb(184, 76, 76);
-                        color: rgb(255, 255, 255);                            
+        background-color: rgb(184, 76, 76);
+                color: rgb(255, 255, 255);                            
     }
 
     .header {

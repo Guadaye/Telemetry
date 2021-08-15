@@ -27,7 +27,9 @@ const funcURL= "//us-central1-myfirstvueapp-2fc2e.cloudfunctions.net/"
 export default new Vuex.Store({
   state:{
       firestoreData:"",
-
+      chartData:[],
+      heatMapData:[],
+      lineChartData:[],
   },
   mutations:{
   //...vuexfireMutations,
@@ -35,7 +37,46 @@ export default new Vuex.Store({
       state.firestoreData = data;
 
     },
+    GET_DATA_FOR_HEATMAP:(state,data)=>{
+      state.heatMapData=[['GamesPlayed','Day','TimeFrame','GameType','GamesPlayed'],];
+      console.log(data.array);
+         
+      for(let i = 0; i<data.array.length; i++)
+      {
+          for(let j = 1;j<=4; j++)
+          {
+              let ele = ["",data.array[i].day,j,"",data.array[i].timeFrame[j],]; 
+              state.heatMapData.push(ele);       
+          }
 
+      }
+      console.log(state.heatMapData);
+      },
+
+    GET_DATA_FOR_LINE_CHART:(state,data)=>{
+      state.lineChartData=[['Day','GamesPlayed'],];
+
+      for(let i = 0; i<data.array.length; i++)
+      {
+          let dailyGamesPlayed = 0;
+          for(let j = 1;j<=4; j++)
+          {
+              dailyGamesPlayed += data.array[i].timeFrame[j];      
+          }
+          let ele = [data.array[i].day,dailyGamesPlayed];
+          state.lineChartData.push(ele);
+      }
+      console.log("state.lineChartData "+state.lineChartData);
+    },
+    GET_DATA_FOR_CHART:(state,data)=>{
+      state.chartData=[['Name','GamesWon'],];
+      console.log(data.array);
+      data.array.forEach(element=>{
+        let ele = [element.name,element.gamesWon];
+        state.chartData.push(ele);
+        })
+   
+    }
   },
   actions:{
       testingHelloWorld(state){        
@@ -64,10 +105,34 @@ export default new Vuex.Store({
         .then(data=>console.log(data))        
      },
 
+     getDataForChart({commit}){
+      Axios.post(`${funcURL}getAggregatedData`,{number:0})
+      .then(response=>response.data)
+     //.then(data=>console.log(data))
+      .then(data=>{commit('GET_DATA_FOR_CHART', data)})
+ 
+     },
+
+     getGamesLogForHeatMap({commit},payload){
+       console.log(payload);
+      Axios.post(`${funcURL}getGameLog`,JSON.parse(JSON.stringify({number:1})))
+      .then(response=>response.data)
+     .then(data=>{commit('GET_DATA_FOR_HEATMAP', data)})
+      //.then(data=>{commit('GET_DATA_FOR_CHART', data)})
+     },
+     getGameLogForLineChart({commit}){
+      Axios.post(`${funcURL}getGameLog`,{number:0})
+      .then(response=>response.data)
+     .then(data=>{commit('GET_DATA_FOR_LINE_CHART', data)})
+      
+     },
   },
 
   getters:{
     firestoreData:state=>state.firestoreData,
+    chartData:state=>state.chartData,
+    heatMapData:state=>state.heatMapData,
+    lineChartData:state=>state.lineChartData,
   },
   modules: {
   //  user,
