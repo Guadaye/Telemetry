@@ -23,7 +23,7 @@ Copyright (c) 2021.Haojun All Rights Reserved.
                 />
         </div>
         <div>You can filter the result from day 1 to the most recent day</div>
-                    <input type="text"  v-model="dayCheck" ><br>
+                    <input type="text"  v-model.number="dayCheck" ><br>
            
                <button @click="loadMap">GetGamesLogForHeatMap</button>
         </div>
